@@ -1,1 +1,1 @@
-# eeg-fmri-rest-state-classification
+# EEG fMRI Rest State Classification
