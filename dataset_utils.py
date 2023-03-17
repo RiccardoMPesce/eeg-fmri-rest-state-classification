@@ -3,6 +3,7 @@ import mne
 
 import importlib
 import json
+import re
 import wandb
 
 from glob import glob
@@ -15,6 +16,51 @@ import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
+
+import random
+
+
+class Splitter:
+    def __init__(self, dataset, split_dict, split_name):
+        # Set EEG dataset
+        self.dataset = dataset
+        # Load split
+        self.split_idx = split_dict[split_name]
+        # Compute size
+        self.size = len(self.split_idx)
+
+    def __len__(self):
+        return self.size
+
+    def __getitem__(self, idx):
+        # Get sample from dataset
+        eeg, fmri, label = self.dataset[self.split_idx[idx]]
+        # Return
+        return eeg, fmri, label
+
+
+def make_splits(dataset, train_frac=0.9, val_frac=0.05, test_frac=0.05):
+    splits = {}
+    
+    if train_frac + val_frac + test_frac != 1:
+        train_frac, val_frac, test_frac = 0.9, 0.05, 0.05
+
+    indices = list(range(len(dataset)))
+
+    random.shuffle(indices)
+
+    for split in ["train", "val", "test"]:
+        if split == "train":
+            frac = train_frac 
+        elif split == "val":
+            frac = val_frac
+        else:
+            frac = test_frac 
+
+        splits[split] = [indices.pop() for _ in range(int(round(len(dataset) * frac)))]
+    
+    return splits
+
 
 def extract_relevant_markers_from_eeg(eeg_file, kind):
     recording_metadata = list(zip(eeg_file.annotations.description.tolist(), eeg_file.annotations.onset.tolist()))
@@ -259,3 +305,18 @@ def dump_dataset_by_interval(eeg_files, mri_files, dataset_base_path):
 
             with open(dataset_base_path / "by_interval" / f"{filename}_no_cwl_s{start}_e{end}", "w") as ds_file_no_cwl:
                 json.dump(entry_no_cwl, ds_file_no_cwl)
+
+
+def find_last_version(checkpoint_path):
+    logs_path = checkpoint_path / "lightning_logs"
+    versions = [p for p in logs_path.glob("*") if (p / "checkpoints").exists()]
+    return logs_path / sorted(versions)[-1] if versions != [] else logs_path / ""
+
+def find_last_checkpoint(checkpoint_path):
+    checkpoints_path = find_last_version(checkpoint_path) / "checkpoints"
+    print(checkpoints_path)
+    if list(checkpoints_path.glob("*")) == []:
+        return None
+    else:
+        last_checkpoint = list(checkpoints_path.glob("*"))[0]
+    return checkpoints_path / last_checkpoint
