@@ -58,6 +58,6 @@ class EEGMRIDataset(Dataset):
             else:
                 eeg = torch.cat((eeg, torch.zeros((32 - eeg.shape[0], eeg.shape[1]))), axis=0)
 
-        fmri = fmri.reshape(1, fmri.shape[0], fmri.shape[1], fmri.shape[2])
+        #fmri = fmri.reshape(1, fmri.shape[0], fmri.shape[1], fmri.shape[2])
 
         return eeg, fmri, label

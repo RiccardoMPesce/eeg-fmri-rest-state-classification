@@ -18,9 +18,21 @@ import torch.nn.functional as F
 
 
 
-def train_loop_eeg(model, loaders, optimizer, loss_function, accuracy_json, loss_json, checkpoint_prefix, n_epochs, device, debug=False, save_every=2):
+def train_loop_eeg(model, loaders, optimizer, loss_function, accuracy_json, loss_json, checkpoint_prefix, n_epochs, device, lr=0.001, debug=False, save_every=2):
+    # Init WandDB
+    wandb.init(
+    # set the wandb project where this run will be logged
+        project = "EEG-FMRI-Rest-State-Classification",
+        
+        # track hyperparameters and run metadata
+        config = {
+        "learning_rate": lr,
+        "architecture": model.architecture,
+        "epochs": n_epochs,
+        }
+    )
+    
     # Initialize training, validation, test losses and accuracy list
-
     accuracy_json_file_path = Path(accuracy_json)
     loss_json_file_path = Path(loss_json)
 
@@ -136,6 +148,15 @@ def train_loop_eeg(model, loaders, optimizer, loss_function, accuracy_json, loss
         test_loss = losses["test"] / counts["test"]
         test_accuracy = accuracies["test"] / counts["test"]
 
+        wandb.log({
+            "train_loss": train_loss,
+            "train_accuracy": train_accuracy,
+            "validation_loss": validation_loss,
+            "validation_accuracy": validation_accuracy,
+            "test_loss": test_loss,
+            "test_accuracy": test_accuracy
+        })
+
         print("INFO")
         print(f"- Model: {model.__class__.__name__} - epoch {epoch}")
         print("STATS")
@@ -162,12 +183,27 @@ def train_loop_eeg(model, loaders, optimizer, loss_function, accuracy_json, loss
 
     # At the end of training, save
     torch.save(model.state_dict(), checkpoint_path / f"{epoch}.pth")
+    
+    # Stop Wandb
+    wandb.finish()
 
 
 
-def train_loop_fmri(model, loaders, optimizer, loss_function, accuracy_json, loss_json, checkpoint_prefix, n_epochs, device, debug=False, save_every=2):
+def train_loop_fmri(model, loaders, optimizer, loss_function, accuracy_json, loss_json, checkpoint_prefix, n_epochs, device, lr=0.001, debug=False, save_every=2):
+    # Init WandDB
+    wandb.init(
+    # set the wandb project where this run will be logged
+        project = "EEG-FMRI-Rest-State-Classification",
+        
+        # track hyperparameters and run metadata
+        config = {
+        "learning_rate": lr,
+        "architecture": model.architecture,
+        "epochs": n_epochs,
+        }
+    )
+    
     # Initialize training, validation, test losses and accuracy list
-
     accuracy_json_file_path = Path(accuracy_json)
     loss_json_file_path = Path(loss_json)
 
@@ -283,6 +319,15 @@ def train_loop_fmri(model, loaders, optimizer, loss_function, accuracy_json, los
         test_loss = losses["test"] / counts["test"]
         test_accuracy = accuracies["test"] / counts["test"]
 
+        wandb.log({
+            "train_loss": train_loss,
+            "train_accuracy": train_accuracy,
+            "validation_loss": validation_loss,
+            "validation_accuracy": validation_accuracy,
+            "test_loss": test_loss,
+            "test_accuracy": test_accuracy
+        })
+
         print("INFO")
         print(f"- Model: {model.__class__.__name__}")
         print("STATS")
@@ -309,3 +354,6 @@ def train_loop_fmri(model, loaders, optimizer, loss_function, accuracy_json, los
 
     # At the end of training, save
     torch.save(model.state_dict(), checkpoint_path / f"{epoch}.pth")
+
+    # Stop Wandb
+    wandb.finish()
