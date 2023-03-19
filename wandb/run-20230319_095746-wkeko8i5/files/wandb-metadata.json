@@ -1,0 +1,33 @@
+{
+    "os": "macOS-13.2.1-arm64-arm-64bit",
+    "python": "3.10.9",
+    "heartbeatAt": "2023-03-19T08:57:55.161196",
+    "startedAt": "2023-03-19T08:57:46.673087",
+    "docker": null,
+    "cuda": null,
+    "args": null,
+    "state": "running",
+    "program": "LocalNotebook-jvsc-df150b31-bc2e-4ad5-847d-4a2ac72918353a032fa9-ffb2-40cc-ad68-bc68bd3e2cb8.ipynb",
+    "root": "/Users/riccardo.pesce/Works/RTh/eeg-fmri-rest-state-classification",
+    "git": {
+        "remote": "https://github.com/RiccardoMPesce/eeg-fmri-rest-state-classification",
+        "commit": "a170c8e5c4b9a035fd0ac3aeb02e206f1cd8d979"
+    },
+    "email": "riccardo.pesce@gig.com",
+    "host": "L-F6LMVK6XNG",
+    "username": "riccardo.pesce",
+    "executable": "/opt/homebrew/Caskroom/mambaforge/base/envs/develop/bin/python",
+    "cpu_count": 10,
+    "cpu_count_logical": 10,
+    "disk": {
+        "total": 926.3517189025879,
+        "used": 112.65510940551758
+    },
+    "gpuapple": {
+        "type": "arm",
+        "vendor": "Apple"
+    },
+    "memory": {
+        "total": 16.0
+    }
+}

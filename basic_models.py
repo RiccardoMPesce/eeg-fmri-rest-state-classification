@@ -36,37 +36,37 @@ class Conv1DBaseNet(nn.Module):
         self.convolutions = nn.Sequential(
 
             # Layer 1
-            nn.Conv1d(self.in_channels, 32, 72, stride=2),
+            nn.Conv1d(self.in_channels, 32, 64, stride=2),
             nn.ReLU(),
             nn.BatchNorm1d(32),
             nn.Dropout(self.dropout),
 
             # Layer 2
-            nn.Conv1d(32, 32, 12, stride=2),
+            nn.Conv1d(32, 32, 48, stride=2),
             nn.ReLU(),
             nn.BatchNorm1d(32),
             nn.Dropout(self.dropout),
 
             # Layer 3
-            nn.Conv1d(32, 64, 24),
+            nn.Conv1d(32, 64, 32),
             nn.ReLU(),
             nn.BatchNorm1d(64),
             nn.Dropout(self.dropout),
 
             # Layer 4
-            nn.Conv1d(64, 64, 12, stride=2),
+            nn.Conv1d(64, 64, 16, stride=1),
             nn.ReLU(),
             nn.BatchNorm1d(64),
             nn.Dropout(self.dropout),
 
             # Layer 5
-            nn.Conv1d(64, 128, 24),
+            nn.Conv1d(64, 128, 8, stride=1),
             nn.ReLU(),
             nn.BatchNorm1d(128),
             nn.Dropout(self.dropout)
         )
 
-        self.pooling = nn.AdaptiveAvgPool1d(64)
+        self.pooling = nn.AdaptiveAvgPool1d(102)
 
         self.fully_connected = nn.Sequential(
             nn.Linear(8192, 2048),
